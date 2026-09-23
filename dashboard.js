@@ -72,6 +72,16 @@ App.reg('dashboard', () => {
       ? 'valores escondidos'
       : `Acumulado no ano: sobra de ${brl(saldoAll)} · ${pct(taxaAll)} da renda guardada`;
     acc.className = 'acc ' + (saldoAll >= 0 ? '' : 'ruim');
+
+    // fichas rápidas no cabeçalho
+    const chips = $('#chips-painel');
+    if (chips) {
+      const qtd = M.sel(cf.mes, cf.ano).length;
+      chips.innerHTML = `
+        <span class="chip entrada">${ico('moeda')} ${occ ? '•••' : brl(t.rec, true)}</span>
+        <span class="chip">${ico('graficoBarras')} ${qtd} lançamento${qtd === 1 ? '' : 's'}</span>
+        ${t.pend > 0 ? `<span class="chip pend">${ico('relogio')} ${occ ? '•••' : brl(t.pend, true)} a pagar</span>` : ''}`;
+    }
   }
 
   function renderOrcado(L) {

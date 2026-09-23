@@ -86,17 +86,21 @@ App.reg('lancamentos', () => {
     $('#lanc-meta').textContent = `${l.length} lançamento${l.length > 1 ? 's' : ''} · saldo ${tot >= 0 ? '+' : ''}${brl(tot, true)}`;
     list.innerHTML = l.map(L => {
       const c = lcat(L);
-      const cls = c?.tipo === 'receita' ? 'pos' : 'neg';
+      const cls = c?.tipo === 'receita' ? 'pos' : (c?.tipo === 'investimento' ? 'inv' : 'neg');
       const sinal = c?.tipo === 'receita' ? '+' : '−';
+      const iniciais = (c?.nome || L.item || '?').replace(/[^A-Za-zÀ-ÿ]/g, '').slice(0, 2).toUpperCase();
       return `<div class="row ${L.pendente ? 'pend' : ''}" data-id="${L.id}">
-        <span class="dot" style="background:${c?.cor || '#94a3b8'}"></span>
+        <span class="icone" style="background:${hexFundo(c?.cor || '#94a3b8')};color:${c?.cor || '#475569'}">${esc(iniciais)}</span>
         <div class="grow">
           <div class="t">${esc(L.desc || L.item)}</div>
           <div class="sub">${fmtBR(L.ts)} · ${esc(L.item)} · ${esc(L.forma)}</div>
         </div>
         <div class="end">
-          <div class="val ${cls}">${sinal}R$ ${L.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-          ${L.pendente ? '<span class="st st-pend">pendente</span>' : ''}
+          <div class="val ${cls}">
+            ${L.pendente ? `<span class="seta">${ico('relogio')}</span>` : (c?.tipo === 'receita' ? `<span class="seta">${ico('setaCima')}</span>` : `<span class="seta">${ico('setaBaixo')}</span>`)}
+            ${sinal}R$ ${L.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </div>
+          ${L.pendente ? '<span class="st st-pend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>a pagar</span>' : ''}
         </div>
       </div>`;
     }).join('');
@@ -107,7 +111,7 @@ App.reg('lancamentos', () => {
     const s = $('#sheet');
     $('#veil').style.opacity = '1';
     $('#veil').style.pointerEvents = 'auto';
-    s.classList.remove('hidden');
+    s.hidden = false;
     if (id == null) {
       $('#sheet-t').textContent = 'Novo lançamento';
       s.dataset.id = '';
@@ -142,7 +146,7 @@ App.reg('lancamentos', () => {
     s.classList.remove('show');
     $('#veil').style.opacity = '0';
     $('#veil').style.pointerEvents = 'none';
-    setTimeout(() => s.classList.add('hidden'), 200);
+    setTimeout(() => { s.hidden = true; }, 200);
   }
   on($('#sheet-cancel'), 'click', fecharSheet);
   on($('#veil'), 'click', fecharSheet);

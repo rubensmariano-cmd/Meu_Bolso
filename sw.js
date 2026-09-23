@@ -1,23 +1,11 @@
-// Meu Bolso — service worker (cache offline)
-const CACHE = 'meu-bolso-v1';
+// Meu Bolso — service worker (cache offline, atualização imediata na navegação)
+const CACHE = 'meu-bolso-v3';
 const ARQUIVOS = [
-  './',
-  './index.html',
-  './consts.js',
-  './util.js',
-  './demo.js',
-  './app.js',
-  './compute.js',
-  './chart.js',
-  './navegacao.js',
-  './dashboard.js',
-  './lancamentos.js',
-  './resumo.js',
-  './config.js',
-  './manifest.webmanifest',
-  './favicon.svg',
-  './icons-192.png',
-  './icons-512.png'
+  './', './index.html',
+  './consts.js', './util.js', './demo.js', './app.js', './compute.js',
+  './chart.js', './navegacao.js', './dashboard.js', './lancamentos.js',
+  './resumo.js', './config.js',
+  './manifest.webmanifest', './favicon.svg', './icons-192.png', './icons-512.png'
 ];
 
 self.addEventListener('install', e => {
@@ -36,16 +24,30 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
-  e.respondWith(
-    caches.match(e.request).then(r =>
-      r || fetch(e.request).then(resp => {
-        const url = new URL(e.request.url);
-        if (resp.ok && url.origin === location.origin) {
+  const url = new URL(e.request.url);
+  if (url.origin !== location.origin) return;
+
+  // navegação (abrir o app): tenta a rede primeiro → se cair, usa o cache
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then(resp => {
           const clone = resp.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-        }
-        return resp;
-      }).catch(() => caches.match('./index.html'))
-    )
+          caches.open(CACHE).then(c => c.put('./index.html', clone));
+          return resp;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // demais recursos: cache primeiro, atualiza em segundo plano
+  e.respondWith(
+    caches.match(e.request).then(r => {
+      const atualiza = fetch(e.request)
+        .then(resp => { if (resp.ok) { const c2 = resp.clone(); caches.open(CACHE).then(c => c.put(e.request, c2)); } return resp; })
+        .catch(() => r);
+      return r || atualiza;
+    })
   );
 });

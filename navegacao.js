@@ -30,7 +30,8 @@ App.reg('nav', () => {
     const alvo = $('#tela-' + tab);
     if (alvo) alvo.hidden = false;
     botoes.forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
-    fab.classList.toggle('hide', tab !== 'Lançamentos');
+    // o botão "+" fica sempre disponível
+    fab.classList.remove('hide');
     if (tab === 'Lançamentos' && App.modules['lancamentos'] && App.modules['lancamentos'].render) {
       App.modules['lancamentos'].render();
     }

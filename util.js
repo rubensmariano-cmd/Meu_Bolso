@@ -42,6 +42,14 @@ const fmtBR = t => {
   return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear();
 };
 
+// cria um fundo claro a partir de uma cor hex (#rrggbb) — tom pastel
+function hexFundo(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
+  if (!m) return '#f1f5f9';
+  const r = parseInt(m[1], 16), g = parseInt(m[2], 16), b = parseInt(m[3], 16);
+  return `rgba(${r},${g},${b},0.13)`;
+}
+
 const key = t => { const d = new Date(t); return `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}`; };
 
 const diasNoMes = ano => {
