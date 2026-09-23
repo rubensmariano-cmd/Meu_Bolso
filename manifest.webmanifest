@@ -1,0 +1,17 @@
+{
+  "name": "Meu Bolso · Controle financeiro",
+  "short_name": "Meu Bolso",
+  "description": "Controle financeiro pessoal: lançamentos, painel do mês e resumo anual. Funciona offline.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f0f7f3",
+  "theme_color": "#059669",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "icons-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
