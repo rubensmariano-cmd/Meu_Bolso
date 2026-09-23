@@ -127,5 +127,9 @@ const Dialogo = {
   },
   alerta(msg, onOk) { this.abrir({ titulo: 'Aviso', texto: msg, soOk: true, sim: 'Entendi' }, onOk); },
   confirmacao(msg, onOk) { this.abrir({ titulo: 'Confirmar', texto: msg, sim: 'Sim', nao: 'Não' }, onOk); },
-  perguntar(titulo, valorInicial, onOk) { this.abrir({ titulo, entrada: true, valor: valorInicial, sim: 'Salvar', nao: 'Cancelar' }, onOk); }
+  perguntar(titulo, valorInicial, onOk) {
+    this.abrir({ titulo, entrada: true, valor: valorInicial, sim: 'Criar', nao: 'Cancelar' }, onOk);
+    const c = this.campos();
+    if (c.entrada) c.entrada.placeholder = 'Nome da categoria…';
+  }
 };
